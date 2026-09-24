@@ -311,17 +311,27 @@ function CaravaneDetail() {
                     </div>
                   </div>
                   {i.statut === "en_attente" && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
                       <Input
                         placeholder="Réf. transaction Wave/OM"
-                        className="w-56"
+                        className="w-full sm:w-56"
                         value={refs[i.id] ?? ""}
                         onChange={(e) => setRefs({ ...refs, [i.id]: e.target.value })}
                       />
-                      <Button size="sm" onClick={() => validate(i)} disabled={!openBus} title={openBus ? "" : "Aucun bus ouvert"}>
-                        <Check className="h-4 w-4 mr-1" /> Valider
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => refuse(i)}><X className="h-4 w-4" /></Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="flex-1 sm:flex-none"
+                          onClick={() => validate(i)}
+                          disabled={!openBus}
+                          title={openBus ? "" : "Aucun bus ouvert"}
+                        >
+                          <Check className="h-4 w-4 mr-1" /> Valider
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => refuse(i)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {i.statut === "valide" && i.reference_transaction && (

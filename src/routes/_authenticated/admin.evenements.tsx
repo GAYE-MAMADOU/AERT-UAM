@@ -54,14 +54,14 @@ function AdminEvenements() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-primary">Archives</h1>
           <p className="text-sm text-muted-foreground">Événements et galerie photo/vidéo.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" /> Nouvel événement</Button>
+            <Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" /> Nouvel événement</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Créer un événement</DialogTitle></DialogHeader>
@@ -120,7 +120,7 @@ function EventForm({ onDone }: { onDone: () => void }) {
   return (
     <form onSubmit={submit} className="space-y-3">
       <div><Label>Titre</Label><Input required value={titre} onChange={(e) => setTitre(e.target.value)} /></div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><Label>Date</Label><Input required type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
         <div><Label>Type</Label><Input value={type} onChange={(e) => setType(e.target.value)} placeholder="Intégration, Caravane…" /></div>
       </div>
@@ -206,10 +206,10 @@ function MediaManager({ eventId, medias, onOpen, onChange }: {
               )}
               <button
                 onClick={() => removeMedia(m)}
-                className="absolute top-1 right-1 bg-black/60 text-white rounded p-1 opacity-0 group-hover:opacity-100"
+                className="absolute top-1 right-1 bg-black/60 text-white rounded p-1.5 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                 aria-label="Supprimer"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
           ))}

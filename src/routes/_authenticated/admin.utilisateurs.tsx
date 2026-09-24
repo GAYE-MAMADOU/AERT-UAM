@@ -100,12 +100,12 @@ function AdminUtilisateurs() {
           placeholder="Rechercher par email…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="max-w-xs"
+          className="w-full sm:max-w-xs"
         />
       </div>
 
-      <div className="mt-6 rounded-xl border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="mt-6 rounded-xl border border-border bg-card overflow-x-auto">
+        <table className="w-full min-w-[560px] text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="text-left px-4 py-3">Email</th>

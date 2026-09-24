@@ -58,16 +58,16 @@ function AdminCaravanes() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl text-primary">Caravanes</h1>
           <p className="text-sm text-muted-foreground">Gestion des voyages organisés.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" /> Nouvelle caravane</Button>
+            <Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" /> Nouvelle caravane</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Créer une caravane</DialogTitle></DialogHeader>
             <CaravaneForm onDone={() => { setOpen(false); load(); }} />
           </DialogContent>
@@ -95,17 +95,17 @@ function AdminCaravanes() {
                 {c.trajet} · {new Date(c.date_depart).toLocaleString("fr-FR")} · {c.prix} FCFA · {c.places_total} places
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Select value={c.status} onValueChange={(v) => setStatus(c.id, v as Caravane["status"])}>
-                <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-32"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ouverte">Ouverte</SelectItem>
                   <SelectItem value="fermee">Fermée</SelectItem>
                   <SelectItem value="terminee">Terminée</SelectItem>
                 </SelectContent>
               </Select>
-              <Link to="/admin/caravanes/$id" params={{ id: c.id }}>
-                <Button variant="outline" size="sm"><ExternalLink className="h-4 w-4 mr-1" /> Inscrits</Button>
+              <Link to="/admin/caravanes/$id" params={{ id: c.id }} className="flex-1 sm:flex-none">
+                <Button variant="outline" size="sm" className="w-full"><ExternalLink className="h-4 w-4 mr-1" /> Inscrits</Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={() => remove(c.id)}><Trash2 className="h-4 w-4" /></Button>
             </div>
@@ -173,13 +173,13 @@ function CaravaneForm({ onDone }: { onDone: () => void }) {
   return (
     <form onSubmit={submit} className="space-y-3 max-h-[75vh] overflow-y-auto pr-1">
       <div><Label>Titre</Label><Input required value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Caravane Tabaski 2026" /></div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><Label>Trajet</Label><Input required value={trajet} onChange={(e) => setTrajet(e.target.value)} /></div>
         <div><Label>Date et heure</Label><Input required type="datetime-local" value={dateDepart} onChange={(e) => setDateDepart(e.target.value)} /></div>
       </div>
       <div><Label>Lieu de départ</Label><Input required value={lieuDepart} onChange={(e) => setLieuDepart(e.target.value)} /></div>
       <div><Label>Prix (FCFA)</Label><Input required type="number" value={prix} onChange={(e) => setPrix(+e.target.value)} /></div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><Label>Numéro Wave</Label><Input value={wave} onChange={(e) => setWave(e.target.value)} placeholder="77 000 00 00" /></div>
         <div><Label>Numéro Orange Money</Label><Input value={om} onChange={(e) => setOm(e.target.value)} placeholder="78 000 00 00" /></div>
       </div>

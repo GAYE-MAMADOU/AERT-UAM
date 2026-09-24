@@ -2,7 +2,15 @@ import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Bus, Images, Users, ScanLine } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { LogOut, LayoutDashboard, Bus, Images, Users, ScanLine, Menu } from "lucide-react";
 
 const baseLinks = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true, adminOnly: false },
@@ -17,6 +25,7 @@ export function AdminShell() {
   const [email, setEmail] = useState<string | null>(null);
   const [isStaff, setIsStaff] = useState<boolean | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -58,35 +67,75 @@ export function AdminShell() {
     );
   }
 
+  const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
+    <nav className="flex flex-col gap-1">
+      {links.map((l) => (
+        <Link
+          key={l.to}
+          to={l.to}
+          activeOptions={{ exact: l.exact }}
+          onClick={onNavigate}
+          className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-foreground/80 hover:bg-primary/5 hover:text-primary"
+          activeProps={{ className: "bg-primary/10 text-primary font-medium" }}
+        >
+          <l.icon className="h-4 w-4 shrink-0" />
+          {l.label}
+        </Link>
+      ))}
+    </nav>
+  );
+
   return (
-    <div className="min-h-[calc(100vh-5rem)] grid md:grid-cols-[240px_1fr]">
-      <aside className="border-r border-border bg-card/40 p-4 md:min-h-full">
+    <div className="min-h-[calc(100vh-5rem)] md:grid md:grid-cols-[240px_1fr]">
+      {/* Barre mobile : logo + menu hamburger, visible uniquement sous md */}
+      <div className="flex md:hidden items-center justify-between border-b border-border bg-card/40 px-4 py-3 sticky top-0 z-30">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            Espace bureau
+          </div>
+          <div className="font-display text-base text-primary leading-tight">AERT–UAM</div>
+        </div>
+        <Sheet open={navOpen} onOpenChange={setNavOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" aria-label="Ouvrir le menu">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[280px] p-4 flex flex-col">
+            <SheetHeader className="mb-4 text-left">
+              <SheetTitle className="font-display text-primary">Espace bureau</SheetTitle>
+            </SheetHeader>
+            <NavLinks onNavigate={() => setNavOpen(false)} />
+            <div className="mt-auto pt-4 border-t border-border text-xs text-muted-foreground">
+              <div className="mb-2 truncate">{email}</div>
+              <SheetClose asChild>
+                <Button size="sm" variant="outline" className="w-full" onClick={signOut}>
+                  <LogOut className="mr-2 h-3.5 w-3.5" /> Déconnexion
+                </Button>
+              </SheetClose>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Sidebar desktop */}
+      <aside className="hidden md:block border-r border-border bg-card/40 p-4 md:min-h-full">
         <div className="mb-6">
-          <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Espace bureau</div>
+          <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Espace bureau
+          </div>
           <div className="font-display text-lg text-primary">AERT–UAM</div>
         </div>
-        <nav className="flex md:flex-col gap-1">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              activeOptions={{ exact: l.exact }}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-primary/5 hover:text-primary"
-              activeProps={{ className: "bg-primary/10 text-primary font-medium" }}
-            >
-              <l.icon className="h-4 w-4" />
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="mt-8 hidden md:block text-xs text-muted-foreground">
+        <NavLinks />
+        <div className="mt-8 text-xs text-muted-foreground">
           <div className="mb-2 truncate">{email}</div>
           <Button size="sm" variant="outline" onClick={signOut}>
             <LogOut className="mr-2 h-3.5 w-3.5" /> Déconnexion
           </Button>
         </div>
       </aside>
-      <section className="p-6 md:p-10">
+
+      <section className="p-4 sm:p-6 md:p-10 min-w-0">
         <Outlet />
       </section>
     </div>
