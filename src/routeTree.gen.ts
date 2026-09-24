@@ -20,8 +20,10 @@ import { Route as HistoireRouteImport } from './routes/histoire'
 import { Route as MissionsRouteImport } from './routes/missions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as BilletIdRouteImport } from './routes/billet.$id'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminEvenementsRouteImport } from './routes/_authenticated/admin.evenements'
+import { Route as AuthenticatedAdminScanRouteImport } from './routes/_authenticated/admin.scan'
 import { Route as AuthenticatedAdminUtilisateursRouteImport } from './routes/_authenticated/admin.utilisateurs'
 import { Route as ApiPublicPaytechIpnRouteImport } from './routes/api/public/paytech-ipn'
 import { Route as AuthenticatedAdminCaravanesIndexRouteImport } from './routes/_authenticated/admin.caravanes.index'
@@ -81,6 +83,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const BilletIdRoute = BilletIdRouteImport.update({
+  id: '/billet/$id',
+  path: '/billet/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -92,6 +99,11 @@ const AuthenticatedAdminEvenementsRoute =
     path: '/evenements',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminScanRoute = AuthenticatedAdminScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminUtilisateursRoute =
   AuthenticatedAdminUtilisateursRouteImport.update({
     id: '/utilisateurs',
@@ -127,7 +139,9 @@ export interface FileRoutesByFullPath {
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/billet/$id': typeof BilletIdRoute
   '/admin/evenements': typeof AuthenticatedAdminEvenementsRoute
+  '/admin/scan': typeof AuthenticatedAdminScanRoute
   '/admin/utilisateurs': typeof AuthenticatedAdminUtilisateursRoute
   '/api/public/paytech-ipn': typeof ApiPublicPaytechIpnRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -144,7 +158,9 @@ export interface FileRoutesByTo {
   '/histoire': typeof HistoireRoute
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/billet/$id': typeof BilletIdRoute
   '/admin/evenements': typeof AuthenticatedAdminEvenementsRoute
+  '/admin/scan': typeof AuthenticatedAdminScanRoute
   '/admin/utilisateurs': typeof AuthenticatedAdminUtilisateursRoute
   '/api/public/paytech-ipn': typeof ApiPublicPaytechIpnRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -164,7 +180,9 @@ export interface FileRoutesById {
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/billet/$id': typeof BilletIdRoute
   '/_authenticated/admin/evenements': typeof AuthenticatedAdminEvenementsRoute
+  '/_authenticated/admin/scan': typeof AuthenticatedAdminScanRoute
   '/_authenticated/admin/utilisateurs': typeof AuthenticatedAdminUtilisateursRoute
   '/api/public/paytech-ipn': typeof ApiPublicPaytechIpnRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -184,7 +202,9 @@ export interface FileRouteTypes {
     | '/missions'
     | '/sitemap.xml'
     | '/admin'
+    | '/billet/$id'
     | '/admin/evenements'
+    | '/admin/scan'
     | '/admin/utilisateurs'
     | '/api/public/paytech-ipn'
     | '/admin/'
@@ -201,7 +221,9 @@ export interface FileRouteTypes {
     | '/histoire'
     | '/missions'
     | '/sitemap.xml'
+    | '/billet/$id'
     | '/admin/evenements'
+    | '/admin/scan'
     | '/admin/utilisateurs'
     | '/api/public/paytech-ipn'
     | '/admin'
@@ -220,7 +242,9 @@ export interface FileRouteTypes {
     | '/missions'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/billet/$id'
     | '/_authenticated/admin/evenements'
+    | '/_authenticated/admin/scan'
     | '/_authenticated/admin/utilisateurs'
     | '/api/public/paytech-ipn'
     | '/_authenticated/admin/'
@@ -239,6 +263,7 @@ export interface RootRouteChildren {
   HistoireRoute: typeof HistoireRoute
   MissionsRoute: typeof MissionsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  BilletIdRoute: typeof BilletIdRoute
   ApiPublicPaytechIpnRoute: typeof ApiPublicPaytechIpnRoute
 }
 
@@ -321,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/billet/$id': {
+      id: '/billet/$id'
+      path: '/billet/$id'
+      fullPath: '/billet/$id'
+      preLoaderRoute: typeof BilletIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -333,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/evenements'
       fullPath: '/admin/evenements'
       preLoaderRoute: typeof AuthenticatedAdminEvenementsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/scan': {
+      id: '/_authenticated/admin/scan'
+      path: '/scan'
+      fullPath: '/admin/scan'
+      preLoaderRoute: typeof AuthenticatedAdminScanRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/utilisateurs': {
@@ -368,6 +407,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEvenementsRoute: typeof AuthenticatedAdminEvenementsRoute
+  AuthenticatedAdminScanRoute: typeof AuthenticatedAdminScanRoute
   AuthenticatedAdminUtilisateursRoute: typeof AuthenticatedAdminUtilisateursRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminCaravanesIdRoute: typeof AuthenticatedAdminCaravanesIdRoute
@@ -376,6 +416,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEvenementsRoute: AuthenticatedAdminEvenementsRoute,
+  AuthenticatedAdminScanRoute: AuthenticatedAdminScanRoute,
   AuthenticatedAdminUtilisateursRoute: AuthenticatedAdminUtilisateursRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminCaravanesIdRoute: AuthenticatedAdminCaravanesIdRoute,
@@ -407,6 +448,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoireRoute: HistoireRoute,
   MissionsRoute: MissionsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  BilletIdRoute: BilletIdRoute,
   ApiPublicPaytechIpnRoute: ApiPublicPaytechIpnRoute,
 }
 export const routeTree = rootRouteImport

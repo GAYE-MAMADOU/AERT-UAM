@@ -22,6 +22,7 @@ type Inscription = {
   reference_transaction: string | null;
   statut: "en_attente" | "valide" | "refuse";
   bus_id: string | null;
+  embarque: boolean;
   created_at: string;
 };
 
@@ -296,6 +297,11 @@ function CaravaneDetail() {
                       {bus && (
                         <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1">
                           <BusIcon className="h-3 w-3" /> {bus.nom ?? `Bus ${bus.numero}`}
+                        </span>
+                      )}
+                      {i.embarque && (
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700">
+                          ✓ Embarqué
                         </span>
                       )}
                     </div>

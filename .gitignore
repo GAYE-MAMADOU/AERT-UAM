@@ -25,6 +25,12 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Cache local de la CLI Supabase (regénéré à chaque `supabase link`, pas à versionner)
+supabase/.temp
+
+# Sortie de build Netlify
+.netlify
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

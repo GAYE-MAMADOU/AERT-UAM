@@ -2,11 +2,12 @@ import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Bus, Images, Users } from "lucide-react";
+import { LogOut, LayoutDashboard, Bus, Images, Users, ScanLine } from "lucide-react";
 
 const baseLinks = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true, adminOnly: false },
   { to: "/admin/caravanes", label: "Caravanes", icon: Bus, exact: false, adminOnly: false },
+  { to: "/admin/scan", label: "Contrôle d'embarquement", icon: ScanLine, exact: true, adminOnly: false },
   { to: "/admin/evenements", label: "Archives", icon: Images, exact: false, adminOnly: false },
   { to: "/admin/utilisateurs", label: "Utilisateurs", icon: Users, exact: false, adminOnly: true },
 ] as const;

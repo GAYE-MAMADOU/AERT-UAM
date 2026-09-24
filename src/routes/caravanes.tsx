@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { createPaytechPayment, reconcilePaytechPayment } from "@/lib/payments.functions";
@@ -24,6 +24,7 @@ import {
   Clock,
   XCircle,
   Loader2,
+  QrCode,
 } from "lucide-react";
 
 export const Route = createFileRoute("/caravanes")({
@@ -58,6 +59,7 @@ function CaravanesPublic() {
   const [items, setItems] = useState<Caravane[]>([]);
   const [loading, setLoading] = useState(true);
   const reconcilePayment = useServerFn(reconcilePaytechPayment);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -74,6 +76,10 @@ function CaravanesPublic() {
             toast.success(
               `Paiement confirmé ! Ton inscription ${result.reference ?? ""} est validée.`,
             );
+            // On redirige directement vers le billet (avec QR code) au lieu de laisser
+            // la référence disparaître dans un toast — l'utilisateur a le temps de
+            // l'enregistrer ou d'en faire une capture d'écran.
+            navigate({ to: "/billet/$id", params: { id: payment } });
           } else {
             toast.info(
               "Paiement en cours de confirmation. Ton inscription sera mise à jour automatiquement.",
@@ -89,7 +95,7 @@ function CaravanesPublic() {
       url.searchParams.delete("cancelled");
       window.history.replaceState({}, "", url.toString());
     }
-  }, [reconcilePayment]);
+  }, [reconcilePayment, navigate]);
 
   useEffect(() => {
     let ignore = false;
@@ -305,6 +311,7 @@ function InscriptionDialog({ caravane }: { caravane: Caravane }) {
 }
 
 type LookupResult = {
+  id: string;
   reference: string;
   nom_complet: string;
   statut: string;
@@ -393,6 +400,13 @@ function LookupCard() {
             <div className={`mt-2 inline-flex items-center gap-1 text-sm ${statutInfo.cls}`}>
               <statutInfo.icon className="h-4 w-4" /> {statutInfo.label}
             </div>
+            {result.statut === "valide" && (
+              <Button asChild size="sm" className="mt-3 w-full">
+                <Link to="/billet/$id" params={{ id: result.id }}>
+                  <QrCode className="mr-1.5 h-4 w-4" /> Voir mon billet
+                </Link>
+              </Button>
+            )}
           </div>
           <div className="rounded-lg border border-border p-4">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Caravane</div>
