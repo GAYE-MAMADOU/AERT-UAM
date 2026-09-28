@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BureauRouteImport } from './routes/bureau'
 import { Route as CaravanesRouteImport } from './routes/caravanes'
+import { Route as ConditionsRouteImport } from './routes/conditions'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GalerieRouteImport } from './routes/galerie'
 import { Route as HistoireRouteImport } from './routes/histoire'
@@ -51,6 +53,16 @@ const BureauRoute = BureauRouteImport.update({
 const CaravanesRoute = CaravanesRouteImport.update({
   id: '/caravanes',
   path: '/caravanes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConditionsRoute = ConditionsRouteImport.update({
+  id: '/conditions',
+  path: '/conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -133,6 +145,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/bureau': typeof BureauRoute
   '/caravanes': typeof CaravanesRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/histoire': typeof HistoireRoute
@@ -153,6 +167,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/bureau': typeof BureauRoute
   '/caravanes': typeof CaravanesRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/histoire': typeof HistoireRoute
@@ -174,6 +190,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/bureau': typeof BureauRoute
   '/caravanes': typeof CaravanesRoute
+  '/conditions': typeof ConditionsRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/histoire': typeof HistoireRoute
@@ -196,6 +214,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bureau'
     | '/caravanes'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
     | '/galerie'
     | '/histoire'
@@ -216,6 +236,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bureau'
     | '/caravanes'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
     | '/galerie'
     | '/histoire'
@@ -236,6 +258,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/bureau'
     | '/caravanes'
+    | '/conditions'
+    | '/confidentialite'
     | '/contact'
     | '/galerie'
     | '/histoire'
@@ -258,6 +282,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BureauRoute: typeof BureauRoute
   CaravanesRoute: typeof CaravanesRoute
+  ConditionsRoute: typeof ConditionsRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
   GalerieRoute: typeof GalerieRoute
   HistoireRoute: typeof HistoireRoute
@@ -302,6 +328,20 @@ declare module '@tanstack/react-router' {
       path: '/caravanes'
       fullPath: '/caravanes'
       preLoaderRoute: typeof CaravanesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conditions': {
+      id: '/conditions'
+      path: '/conditions'
+      fullPath: '/conditions'
+      preLoaderRoute: typeof ConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -443,6 +483,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BureauRoute: BureauRoute,
   CaravanesRoute: CaravanesRoute,
+  ConditionsRoute: ConditionsRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
   GalerieRoute: GalerieRoute,
   HistoireRoute: HistoireRoute,

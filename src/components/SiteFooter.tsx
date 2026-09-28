@@ -43,6 +43,14 @@ export function SiteFooter() {
       <div className="border-t border-primary-foreground/10">
         <div className="container-prose py-5 text-xs text-primary-foreground/60 flex flex-wrap justify-between gap-2">
           <span>© {new Date().getFullYear()} AERT–UAM. Tous droits réservés.</span>
+          <nav className="flex flex-wrap gap-x-4 gap-y-1" aria-label="Informations légales">
+            <Link to="/confidentialite" className="hover:text-accent">
+              Politique de confidentialité
+            </Link>
+            <Link to="/conditions" className="hover:text-accent">
+              Conditions d'utilisation
+            </Link>
+          </nav>
           <span>Fait avec dévouement pour les étudiants de Thiès.</span>
         </div>
       </div>
