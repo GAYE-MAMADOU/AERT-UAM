@@ -1,10 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { ArrowLeft, Check, X, Bus as BusIcon, Plus, Lock, Unlock, Save, Users } from "lucide-react";
+import { ArrowLeft, Check, X, Bus as BusIcon, Plus, Lock, Unlock, Save, Users, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/caravanes/$id")({
   component: CaravaneDetail,
@@ -42,6 +49,10 @@ function CaravaneDetail() {
   const [refs, setRefs] = useState<Record<string, string>>({});
   const [newBus, setNewBus] = useState({ nom: "", places: 50 });
   const [editPlaces, setEditPlaces] = useState<Record<string, number>>({});
+  const [q, setQ] = useState("");
+  const [statutFilter, setStatutFilter] = useState<"all" | Inscription["statut"]>("all");
+  const [busFilter, setBusFilter] = useState<string>("all"); // "all" | "none" | id du bus
+  const [embarqueFilter, setEmbarqueFilter] = useState<"all" | "oui" | "non">("all");
 
   async function load() {
     const [c, i, b] = await Promise.all([
@@ -151,6 +162,32 @@ function CaravaneDetail() {
     en_attente: items.filter(i => i.statut === "en_attente").length,
     refuse: items.filter(i => i.statut === "refuse").length,
   };
+
+  // Recherche insensible à la casse, aux accents et aux espaces (utile pour les numéros)
+  const norm = (v: string) =>
+    v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
+
+  const filtered = useMemo(() => {
+    const needle = norm(q);
+    return items.filter((i) => {
+      if (statutFilter !== "all" && i.statut !== statutFilter) return false;
+      if (busFilter === "none" && i.bus_id) return false;
+      if (busFilter !== "all" && busFilter !== "none" && i.bus_id !== busFilter) return false;
+      if (embarqueFilter === "oui" && !i.embarque) return false;
+      if (embarqueFilter === "non" && i.embarque) return false;
+      if (!needle) return true;
+      return [i.nom_complet, i.reference, i.telephone, i.email ?? "", i.reference_transaction ?? ""]
+        .some((f) => norm(f).includes(needle));
+    });
+  }, [items, q, statutFilter, busFilter, embarqueFilter]);
+
+  const hasFilters = q !== "" || statutFilter !== "all" || busFilter !== "all" || embarqueFilter !== "all";
+  function resetFilters() {
+    setQ("");
+    setStatutFilter("all");
+    setBusFilter("all");
+    setEmbarqueFilter("all");
+  }
 
   const totalPlaces = buses.reduce((s, b) => s + b.places_total, 0);
   const openBus = pickOpenBus();
@@ -278,13 +315,70 @@ function CaravaneDetail() {
       {/* INSCRIPTIONS */}
       <section className="mt-8">
         <h2 className="font-display text-xl text-primary mb-3">Inscriptions</h2>
+
+        {items.length > 0 && (
+          <div className="mb-4 rounded-xl border border-border bg-card p-3 space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Rechercher : nom, référence, téléphone, email…"
+                className="pl-9"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <Select value={statutFilter} onValueChange={(v) => setStatutFilter(v as typeof statutFilter)}>
+                <SelectTrigger><SelectValue placeholder="Statut" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
+                  <SelectItem value="valide">Validés</SelectItem>
+                  <SelectItem value="en_attente">En attente</SelectItem>
+                  <SelectItem value="refuse">Refusés</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={busFilter} onValueChange={setBusFilter}>
+                <SelectTrigger><SelectValue placeholder="Bus" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les bus</SelectItem>
+                  <SelectItem value="none">Sans bus</SelectItem>
+                  {buses.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>{b.nom ?? `Bus ${b.numero}`}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={embarqueFilter} onValueChange={(v) => setEmbarqueFilter(v as typeof embarqueFilter)}>
+                <SelectTrigger><SelectValue placeholder="Embarquement" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Embarquement : tous</SelectItem>
+                  <SelectItem value="oui">Embarqués</SelectItem>
+                  <SelectItem value="non">Pas encore embarqués</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+              <span>{filtered.length} résultat(s) sur {items.length}</span>
+              {hasFilters && (
+                <Button type="button" variant="ghost" size="sm" onClick={resetFilters}>
+                  <X className="h-3 w-3 mr-1" /> Réinitialiser
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-3">
           {items.length === 0 && (
             <div className="text-sm text-muted-foreground rounded-md border border-dashed border-border p-8 text-center">
               Aucune inscription pour le moment.
             </div>
           )}
-          {items.map((i) => {
+          {items.length > 0 && filtered.length === 0 && (
+            <div className="text-sm text-muted-foreground rounded-md border border-dashed border-border p-8 text-center">
+              Aucune inscription ne correspond à ta recherche.
+            </div>
+          )}
+          {filtered.map((i) => {
             const bus = buses.find((b) => b.id === i.bus_id);
             return (
               <div key={i.id} className="rounded-xl border border-border bg-card p-4">
