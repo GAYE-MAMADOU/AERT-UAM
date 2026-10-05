@@ -78,3 +78,63 @@ export const revokeRole = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const createBureauUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: { email: string; password: string; role: AppRole }) => {
+    const email = d?.email?.trim().toLowerCase();
+    if (!email || !email.includes("@")) throw new Error("Email invalide");
+    if (!d?.password || d.password.length < 8) {
+      throw new Error("Le mot de passe doit faire au moins 8 caractères");
+    }
+    if (!["admin", "bureau", "member"].includes(d.role)) throw new Error("Rôle invalide");
+    return { email, password: d.password, role: d.role };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+    });
+    if (createErr) throw new Error(createErr.message);
+
+    const userId = created.user.id;
+    const { error: roleErr } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: userId, role: data.role });
+    if (roleErr) {
+      // On évite de laisser un compte orphelin sans rôle si l'attribution échoue.
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+      throw new Error(roleErr.message);
+    }
+
+    return { ok: true, id: userId, email: data.email };
+  });
+
+export const deleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: { userId: string }) => {
+    if (!d?.userId) throw new Error("userId requis");
+    return d;
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) {
+      throw new Error("Tu ne peux pas supprimer ton propre compte.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Les rôles sont liés à l'utilisateur par une clé étrangère ; on les retire
+    // d'abord pour éviter toute contrainte bloquante côté base.
+    const { error: roleErr } = await supabaseAdmin
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.userId);
+    if (roleErr) throw new Error(roleErr.message);
+
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

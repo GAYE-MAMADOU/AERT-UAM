@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -19,9 +20,9 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -34,20 +35,10 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
-        });
-        if (error) throw error;
-        toast.success("Compte créé. Demande à l'administrateur de t'attribuer un rôle bureau.");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Connecté");
-        navigate({ to: "/admin" });
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      toast.success("Connecté");
+      navigate({ to: "/admin" });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -68,18 +59,33 @@ function AuthPage() {
         </div>
         <div>
           <Label htmlFor="password">Mot de passe</Label>
-          <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
+              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "..." : mode === "signin" ? "Se connecter" : "Créer le compte"}
+          {loading ? "..." : "Se connecter"}
         </Button>
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="block w-full text-sm text-muted-foreground hover:text-primary"
-        >
-          {mode === "signin" ? "Créer un compte bureau" : "J'ai déjà un compte"}
-        </button>
+        <p className="text-center text-xs text-muted-foreground">
+          Pas encore de compte ? Demande à un administrateur de t'en créer un depuis l'espace bureau.
+        </p>
       </form>
     </div>
   );
