@@ -28,19 +28,31 @@ type Member = {
 };
 
 const executive: Member[] = [
-  { role: "Président", name: "À confirmer", filiere: "Génie Informatique", initials: "PR" },
-  { role: "Vice-Président", name: "À confirmer", filiere: "Sciences & Tech.", initials: "VP" },
-  { role: "Secrétaire Général", name: "À confirmer", filiere: "Management", initials: "SG" },
-  { role: "Trésorier Général", name: "À confirmer", filiere: "Économie", initials: "TG" },
-  { role: "Président Commission Sociale (PCS)", name: "À confirmer", filiere: "Santé", initials: "CS" },
-  { role: "Chargée de la Communication", name: "À confirmer", filiere: "Communication", initials: "CC" },
+  { role: "Président", name: "Mamadou Baila DIALLO", filiere: "Hydraulique et assainissement", initials: "PR" },
+  { role: "Vice-Présidente", name: "Sophie Daba FAYE", filiere: "Sciences Economiques et Gestion", initials: "VP" },
+  { role: "Secrétaire Général", name: "Kalidou TINE", filiere: "Mine et Géologie", initials: "SG" },
+  { role: "Secrétaire Générale Adjointe", name: "Astou BEYE", filiere: "Departement des Sciences Technologiques et de l'Ingénierie", initials: "SA" },
+  { role: "Trésoriere Générale", name: "Mame Diarra NGOM", filiere: "Sciences Économiques et Gestion", initials: "TG" },
+  { role: "Trésorière Générale Adjointe", name: "Nar SARR", filiere: "Sciences Économiques et Gestion", initials: "TA" },
+  { role: "Commissaire au compte", name: "Ababacar NDIAYE", filiere: "Sciences Économiques et Gestion", initials: "CC" },
 ];
 
 const commissions: Member[] = [
-  { role: "Commission Caravanes", name: "À confirmer", initials: "CV" },
-  { role: "Commission Événements", name: "À confirmer", initials: "EV" },
-  { role: "Commission Tutorat", name: "À confirmer", initials: "TU" },
-  { role: "Commission Relations Extérieures", name: "À confirmer", initials: "RE" },
+  { role: "Commission d'organisations", name: "Omar MARONE", initials: "CO" },
+  { role: "Commission d'organisation Adjoint", name: "Matar THIAM", initials: "COA" },
+  { role: "Commission Feminine", name: "Fatou DIOUF", initials: "CF" },
+  { role: "Commission Feminine Adjointe", name: "Arame NDOUR", initials: "CFA" },
+  { role: "Commission Feminine Adjointe", name: "Fatima NDIAYE", initials: "CFA" },
+  { role: "Commission Pedagogique", name: "Mouhamadou Aminata DIOP", initials: "CP" },
+  { role: "Commission Pedagogique Adjoint", name: "Malick NIANG", initials: "CPA" },
+  { role: "Commission Sociale", name: "Abdou Aziz FAYE", initials: "PCS" },
+  { role: "Commission Sports et cultures", name: "Alassane DIAKHATE", initials: "CSC" },
+  { role: "Commission Sports et cultures Adjoint", name: "Elhadj Mbaye SECK", initials: "CSC" },
+  { role: "Commission Sociale Adjoint", name: "Mouhamed Fadel FALL", initials: "PCSA" },
+  { role: "Charge de la communication", name: "Maimouna GUEYE", initials: "CC" },
+  { role: "Charge de la communication Adjointe", name: "Yacine NDIAYE", initials: "CCA" },
+  { role: "Commission Relations Extérieures", name: "Baye Ndiole SENE", initials: "CRE" },
+  { role: "Commission Relations Extérieures Adjoint", name: "Cheikh Saliou NIOME", initials: "CREA" },
 ];
 
 function BureauPage() {
